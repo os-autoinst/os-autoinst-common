@@ -82,33 +82,21 @@ EOM
 }
 
 sub update_spec {
-
     for my $target (@$spectargets) {
         my $name = $target . '_requires';
         my $deps = $data->{$name};
         my $prefix = "%define $name";
         my $specline = $prefix;
         for my $key (sort keys %$deps) {
-            my $version = $deps->{$key};
-            if (ref $version) {
-                $version = $version->{rpm};
-            }
+            my $version = ref $version ? $version->{rpm} : $deps->{$key};
             $specline .= " $key";
-            if ($key eq 'perl(Perl::Tidy)') {
-                undef $version;
-            }
-            if ($version) {
-                $specline .= " $version";
-            }
+            undef $version if $key eq 'perl(Perl::Tidy)';
+            $specline .= " $version" if $version;
         }
         my $comment = "# The following line is generated from $yamlfile";
-        if ($spec =~ s/^# .*generated.*\n^$prefix.*/$comment\n$specline/m) {
-            next;
-        }
+        next if $spec =~ s/^# .*generated.*\n^$prefix.*/$comment\n$specline/m;
         # No comment above the line yet
-        unless ($spec =~ s/^$prefix.*/$comment\n$specline/m) {
-            die "/^$prefix/ not found in $specfile";
-        }
+        die "/^$prefix/ not found in $specfile" unless $spec =~ s/^$prefix.*/$comment\n$specline/m;
     }
 
     path($specfile)->spurt($spec);
@@ -125,10 +113,7 @@ sub get_modules {
         for my $key (keys %$deps) {
             my $module = $key;
             next unless $module =~ s/^perl\((.*)\)$/$1/;
-            my $version = $deps->{$key};
-            if (ref $version) {
-                $version = $version->{perl};
-            }
+            my $version = ref $version ? $version->{perl} : $deps->{$key};
             my $cpantarget = $cpantarget_mapping->{$target} || 'main';
             $modules_by_target{$cpantarget}->{$module} = $version;
         }
