@@ -4,6 +4,7 @@
 # from dependencies.yaml
 ##################################################
 
+# Needed until preaction/Log-Any#105 is solved.
 requires 'Storable', '>= 3.06';
 
 feature 'cover' => sub {
