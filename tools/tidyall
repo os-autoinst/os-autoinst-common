@@ -7,6 +7,7 @@ use strict;
 use warnings;
 use Perl::Tidy;
 use Module::CPANfile;
+use FindBin '$Bin';
 
 =item perltidy_version()
 
@@ -15,7 +16,19 @@ Grabs the perltidy version from cpanfile using Module::CPANfile.
 =cut
 
 sub perltidy_version() {
-    my $version = Module::CPANfile->load('cpanfile')
+    my $cpanfile_location;
+    # Try searching for a cpanfile in:
+    # - the current working directory
+    # - a directory above this command
+    # - the catch-all location in external/os-autoinst-common
+    my @locations = ('.', "$Bin/..", "$Bin/../external/os-autoinst-common");
+
+    foreach my $path (@locations) {
+        next unless -e "$path/cpanfile";
+        $cpanfile_location = "$path/cpanfile" and last;
+    }
+
+    my $version = Module::CPANfile->load($cpanfile_location)
       ->prereq_for_module('Perl::Tidy')
       ->requirement
       ->version;
