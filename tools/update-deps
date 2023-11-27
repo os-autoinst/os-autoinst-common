@@ -4,6 +4,7 @@
 
 use strict;
 use warnings;
+use experimental 'signatures';
 use 5.010;
 
 use YAML::PP;
