@@ -12,10 +12,10 @@ use Getopt::Long;
 use FindBin qw($Bin);
 
 GetOptions(
-    "help|h" => \my $help,
-    "cpanfile" => \my $cpanfile,
-    "specfile=s" => \my $specfile,
-    "dockerfile=s" => \my $dockerfile,
+    'help|h' => \my $help,
+    cpanfile => \my $cpanfile,
+    'specfile=s' => \my $specfile,
+    'dockerfile=s' => \my $dockerfile,
 );
 
 usage(0) if $help;
@@ -24,7 +24,7 @@ usage(1) unless ($cpanfile || $specfile || $dockerfile);
 my $proj_root = "$Bin/..";
 
 my $scriptname = path(__FILE__)->to_rel($proj_root);
-my $dependencies_yaml_location = "dependencies.yaml";
+my $dependencies_yaml_location = 'dependencies.yaml';
 my $file = "$proj_root/$dependencies_yaml_location";
 my $cpanfile_location = "$proj_root/cpanfile";
 
@@ -84,7 +84,7 @@ EOM
 }
 
 sub update_spec {
-    my $spec = path($specfile)->slurp if $specfile;
+    my $spec = path($specfile)->slurp;
 
     for my $target (@$spectargets) {
         my $name = $target . '_requires';
