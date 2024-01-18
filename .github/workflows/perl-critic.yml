@@ -1,13 +1,15 @@
 ---
 name: 'Perl critic'
 
+# yamllint disable-line rule:truthy
 on:
   pull_request:
   push:
     branches:
       - 'master'
 
- perl-critic-checks:
+jobs:
+  perl-critic-checks:
     runs-on: ubuntu-latest
     name: "Perlcritic"
     container:
