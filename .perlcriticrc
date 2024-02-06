@@ -42,7 +42,7 @@ severity = 1
 # == Custom Policies
 # -- Useless quotes on hashes
 [HashKeyQuotes]
-severity = 5
+severity = 3
 
 # -- Superfluous use strict/warning.
 [RedundantStrictWarning]
