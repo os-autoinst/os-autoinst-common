@@ -26,7 +26,7 @@ sub violates ($self, $elem, $document) {
     my $k = $elem->literal;
     # skip anything that has a special symbol in the content
     return () unless $k =~ m/^\w+$/;
-    
+
     # report violation
     my $desc = q{Hash key with quotes};
     my $expl = qq{Avoid useless quotes for key "$k"};
