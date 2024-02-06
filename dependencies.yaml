@@ -15,10 +15,9 @@ main_requires:
   # Needed until preaction/Log-Any#105 is solved.
   perl(Storable): '>= 3.06'
   perl(Module::CPANfile):
-  perl(version):
 
 develop_requires:
-  perl(Perl::Tidy): '== 20230912'
+  perl(Perl::Tidy): '== 20240202'
   perl(Code::TidyAll):
   perl(Perl::Critic):
   perl(Perl::Critic::Community):
