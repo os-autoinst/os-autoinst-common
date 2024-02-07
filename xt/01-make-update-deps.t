@@ -22,6 +22,7 @@ my $rc = $?;
 die "Could not run $make_cmd: rc=$rc, out: @out" if $rc;
 
 my @status = grep { not m/^\?/ } qx{git -C "$Bin/.." status --porcelain};
+is $?, 0, 'git status exit code 0';
 ok(!@status, "No changed files after '$make_cmd'") or diag @status;
 
 done_testing;
