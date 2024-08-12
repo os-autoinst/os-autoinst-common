@@ -1,7 +1,7 @@
 # Copyright SUSE LLC
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-package Perl::Critic::Policy::HashKeyQuotes;
+package Perl::Critic::Policy::OpenQA::HashKeyQuotes;
 
 use strict;
 use warnings;
@@ -22,6 +22,8 @@ sub applies_to { return qw(PPI::Token::Quote::Single PPI::Token::Quote::Double) 
 sub violates ($self, $elem, $document) {
     # skip anything that's not a hash key
     return () unless is_hash_key($elem);
+    # skip if it has a sibling, e.g. $h{'foo' . 'bar'}
+    return () if $elem->snext_sibling or $elem->sprevious_sibling;
 
     # only some PPI::Token::Quote::* classes implement literal
     my $k = $elem->can('literal') ? $elem->literal : $elem->string;
