@@ -45,5 +45,5 @@ severity = 1
 severity = 5
 
 # -- Superfluous use strict/warning.
-[RedundantStrictWarning]
+[OpenQA::RedundantStrictWarning]
 equivalent_modules = Test::Most
