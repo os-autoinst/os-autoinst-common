@@ -17,15 +17,10 @@ To use it in your repository, you would usually do something like this:
     % cd your-repo
     % git subrepo clone git@github.com:os-autoinst/os-autoinst-common.git ext/os-autoinst-common
 
-This will automatically create a commit with information on what command
-was used.
-
-And then, if necessary, link files via symlinks to the places where you need
+This will automatically create a commit with information on what command was used. And then, if necessary, link files via symlinks to the places where you need
 them.
 
-The cloned repository files will be part of your actual repository, so anyone
-cloning this repo will have the files automatically without needing to use
-`git-subrepo` themselves.
+The cloned repository files will be part of your actual repository, so anyone cloning this repo will have the files automatically without needing to use `git-subrepo` themselves.
 
 `ext` is just a convention, you can clone it into any directory.
 
@@ -34,8 +29,7 @@ It's also possible to clone a branch (or a specific tag or sha):
     % git subrepo clone git@github.com:os-autoinst/os-autoinst-common.git \
         -b branchname ext/os-autoinst-common
 
-After cloning, you should see a file `ext/os-autoinst-common/.gitrepo` with
-information about the cloned commit.
+After cloning, you should see a file `ext/os-autoinst-common/.gitrepo` with information about the cloned commit.
 
 ### Pull
 
@@ -48,7 +42,7 @@ that:
 
     % git subrepo clone --force git@github.com:os-autoinst/os-autoinst-common.git ext/os-autoinst-common
 
-### Making changes
+### Making changes test test test testtest test test testest test test testt test test test test
 
 If you make changes in the subrepo inside of your top repo, you can simply commit
 them and then do:
@@ -59,8 +53,7 @@ them and then do:
 
 You can find more information here:
 * [Repository and usage](https://github.com/ingydotnet/git-subrepo)
-* [A good comparison between subrepo, submodule and
-  subtree](https://github.com/ingydotnet/git-subrepo/blob/master/Intro.pod)
+* [A good comparison between subrepo, submodule and subtree](https://github.com/ingydotnet/git-subrepo/blob/master/Intro.pod)
 
 
 ## License

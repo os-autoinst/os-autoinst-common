@@ -8,7 +8,7 @@ update-deps:
 	tools/update-deps --cpanfile cpanfile
 
 .PHONY: test
-test: test-tidy test-critic test-yaml test-author test-t
+test: test-tidy test-critic test-line-limits test-yaml test-author test-t
 
 .PHONY: test-tidy
 test-tidy:
@@ -17,6 +17,10 @@ test-tidy:
 .PHONY: test-critic
 test-critic:
 	tools/perlcritic --quiet .
+
+.PHONY: test-line-limits
+test-line-limits:
+	tools/check_line_limits
 
 .PHONY: test-yaml
 test-yaml:

@@ -1,0 +1,29 @@
+#!/usr/bin/bash
+
+set -euo pipefail
+
+BASE_SHA=$(git merge-base origin/${{ github.base_ref }} HEAD)
+md_files=$(git diff --name-only "$BASE_SHA" -- '*.md')
+
+[ -z "$md_files" ] && echo "no markdown changed" && exit 0
+
+fail=0
+for file in $md_files; do
+    diff_lines=$(git diff "$BASE_SHA" -- "$file" | grep '^+' | grep -v '^+++' | cut -c2-)
+    while IFS= read -r line; do
+        if [[ $line =~ https?:// ]]; then
+            continue
+        fi
+
+        if [[ $line =~ ^#+[[:space:]] ]]; then
+            continue
+        fi
+
+        if [ "${#line}" -gt 80 ]; then
+            echo "[ERROR][$file] line exceeds 80 characters: $line"
+            fail=1
+        fi
+    done <<< "$diff_lines"
+done
+
+exit $fail
