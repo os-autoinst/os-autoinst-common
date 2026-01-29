@@ -1,6 +1,6 @@
 package OpenQA::Test::PatchDeparse;
 use Test::Most;
-# Can be removed once we switched to Leap 16 for CI
+# Can be removed once support for Perl <= 5.26 is dropped
 
 # Monkeypatch B::Deparse
 # https://progress.opensuse.org/issues/40895
