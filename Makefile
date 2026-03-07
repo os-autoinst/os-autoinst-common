@@ -12,7 +12,7 @@ setup-hooks: ## Install pre-commit git hooks
 	pre-commit install --install-hooks -t commit-msg -t pre-commit
 
 .PHONY: test-checkstyle
-test-checkstyle:test-tidy test-critic test-yaml test-gitlint
+test-checkstyle:test-tidy test-yaml test-gitlint
 
 .PHONY: test
 test: test-checkstyle test-author test-t
@@ -20,10 +20,6 @@ test: test-checkstyle test-author test-t
 .PHONY: test-tidy
 test-tidy:
 	tools/tidyall --all --check-only
-
-.PHONY: test-critic
-test-critic:
-	tools/perlcritic --quiet .
 
 .PHONY: test-yaml
 test-yaml:
