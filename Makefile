@@ -7,6 +7,10 @@ help:
 update-deps:
 	tools/update-deps --cpanfile cpanfile
 
+.PHONY: setup-hooks
+setup-hooks: ## Install pre-commit git hooks
+	pre-commit install --install-hooks -t commit-msg -t pre-commit
+
 .PHONY: test-checkstyle
 test-checkstyle:test-tidy test-critic test-yaml test-gitlint
 
