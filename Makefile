@@ -29,11 +29,9 @@ test-yaml: ## Run yamllint checks
 .PHONY: test-gitlint
 test-gitlint: ## Run gitlint checks
 	@which gitlint >/dev/null 2>&1 || (echo "Command 'gitlint' not found, can not execute commit message checks. Install with 'python3-gitlint' (openSUSE) or 'pip install gitlint-core'" && false)
-	@if git rev-parse --verify master >/dev/null 2>&1 && [ "$$(git rev-parse HEAD)" != "$$(git rev-parse master)" ]; then \
-		gitlint --commits master..HEAD; \
-	else \
-		gitlint; \
-	fi
+	@BASES=$$(for i in upstream/master upstream/main origin/master origin/main master main; do git rev-parse --verify $$i 2>/dev/null; done ||:); \
+	BASE=$$(git merge-base --independent $$BASES | head -n 1); \
+	gitlint --commits "$$BASE..HEAD"
 
 .PHONY: test-author
 test-author: ## Run author tests
