@@ -24,5 +24,5 @@ Test::Perl::Critic::all_critic_ok(
     grep { -e $_ }
       qw(lib xt OpenQA backend consoles container script tools),
     glob('*.pm'),
-    grep { !/t\/(data|fake)\// } glob('t/*.t t/*.pm t/*/*.t t/*/*.pm')
+    grep { !/t\/(data|fake)\// } glob 't/*.t t/*.pm t/*/*.t t/*/*.pm'
 );
