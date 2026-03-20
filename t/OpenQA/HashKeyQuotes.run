@@ -13,10 +13,16 @@ $h{"Inf"} = 7;
 $h{"3_14"} = 7;
 
 ## name Failing
-## failures 4
+## failures 5
 ## cut
 
 $h{'single'} = 1;
 $h{  'single'  } = 2;
 $h{"double"} = 3;
 $h{"double2" } = 4;
+
+my $cascade = {
+    'single' => {
+        bare => 5
+    }
+};
