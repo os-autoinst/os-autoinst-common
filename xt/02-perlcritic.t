@@ -3,13 +3,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 use Test::Most;
-use v5.10;
 use experimental 'signatures';
 # See xt/01-comple-check-all.t for ":no_end_test" here
 use Test::Warnings qw(:no_end_test :report_warnings);
 use FindBin '$Bin';
-use lib "$FindBin::Bin/lib";
-use OpenQA::Test::TimeLimit '90';
+use File::Spec;
 
 sub extra_include_paths (@extra_paths) {
     my @paths = map { ("$Bin/../$_", "$Bin/../external/os-autoinst-common/$_") } @extra_paths;
@@ -17,8 +15,14 @@ sub extra_include_paths (@extra_paths) {
 }
 
 BEGIN {
-    unshift @INC, extra_include_paths('lib/perlcritic');
+    unshift @INC, extra_include_paths('lib', 'lib/perlcritic');
 }
+use OpenQA::Test::TimeLimit '90';
 
 use Test::Perl::Critic (-profile => '.perlcriticrc');
-Test::Perl::Critic::all_critic_ok('lib', 't', 'xt');
+Test::Perl::Critic::all_critic_ok(
+    grep { -e $_ }
+      qw(lib xt OpenQA backend consoles container script tools),
+    glob('*.pm'),
+    grep { !/t\/(data|fake)\// } glob('t/*.t t/*.pm t/*/*.t t/*/*.pm')
+);
