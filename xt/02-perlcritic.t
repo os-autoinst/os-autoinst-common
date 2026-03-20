@@ -25,5 +25,5 @@ my @dirs = $env_dirs ? split(/[:;]/, $env_dirs) : qw(lib xt OpenQA backend conso
 Test::Perl::Critic::all_critic_ok(
     grep { -e $_ } @dirs,
     glob('*.pm'),
-    grep { !/t\/(data|fake)\// } glob('t/*.t t/*.pm t/*/*.t t/*/*.pm')
+    grep { !/t\/(data|fake)\// } glob 't/*.t t/*.pm t/*/*.t t/*/*.pm'
 );
