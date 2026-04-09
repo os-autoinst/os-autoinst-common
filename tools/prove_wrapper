@@ -8,7 +8,11 @@ OUTPUT=$(mktemp)
 
 echo "Running prove with TAP output check ..."
 
-prove -I . "$@" 2>&1 | tee "$OUTPUT"
+# use unbuffer if available and stdout is a terminal for immediate output
+[[ -t 1 ]] && unbuffer_cmd=("$(which unbuffer 2>/dev/null)") || unbuffer_cmd=()
+
+"${unbuffer_cmd[@]}" prove -I . "$@" 2>&1 | tee "$OUTPUT"
+
 STATUS=${PIPESTATUS[0]}
 
 if [ "$STATUS" -ne 0 ]; then
