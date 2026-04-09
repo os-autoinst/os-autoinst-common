@@ -1,3 +1,6 @@
+# PROVE: Test application for Perl tests
+PROVE ?= tools/prove_wrapper
+
 all: help
 
 .PHONY: help
@@ -35,8 +38,8 @@ test-gitlint: ## Run gitlint checks
 
 .PHONY: test-author
 test-author: ## Run author tests
-	prove -l -r xt/
+	"${PROVE}" -l -r xt/
 
 .PHONY: test-t
 test-t: ## Run unit tests
-	prove -l -r t/
+	"${PROVE}" -l -r t/
