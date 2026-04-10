@@ -24,6 +24,7 @@ develop_requires:
   perl(Test::Perl::Critic):
   python3-gitlint:
   expect:  # for unbuffer
+  shfmt:
 
 cover_requires:
   perl(Devel::Cover):
