@@ -4,14 +4,19 @@
 
 set -euo pipefail
 
-OUTPUT=$(mktemp)
+prove_cmd=(prove -I .)
+
+# skip the check for unhandled output when running in verbose mode
+for arg in "$@"; do [[ $arg =~ (-v|--verbose) ]] && TEST_VERBOSE=1 && break; done
+[[ ${TEST_VERBOSE:-} && $TEST_VERBOSE != 0 ]] && exec "${prove_cmd[@]}" "$@"
 
 echo "Running prove with TAP output check ..."
 
 # use unbuffer if available and stdout is a terminal for immediate output
 [[ -t 1 ]] && unbuffer_cmd=("$(which unbuffer 2> /dev/null)") || unbuffer_cmd=()
 
-"${unbuffer_cmd[@]}" prove -I . "$@" 2>&1 | tee "$OUTPUT"
+OUTPUT=$(mktemp)
+"${unbuffer_cmd[@]}" "${prove_cmd[@]}" "$@" 2>&1 | tee "$OUTPUT"
 
 STATUS=${PIPESTATUS[0]}
 
