@@ -23,6 +23,7 @@ develop_requires:
   perl(Perl::Critic::Community):
   perl(Test::Perl::Critic):
   python3-gitlint:
+  python3-typer:
   expect:  # for unbuffer
   shfmt:
 

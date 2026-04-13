@@ -1,46 +1,101 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 # Copyright SUSE LLC
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-set -euo pipefail
+import os
+import re
+import shutil
+import subprocess
+import sys
 
-prove_cmd=(prove -I .)
+import typer
 
-# skip the check for unhandled output when running in verbose mode
-for arg in "$@"; do [[ $arg =~ (-v|--verbose) ]] && TEST_VERBOSE=1 && break; done
-[[ ${TEST_VERBOSE:-} && $TEST_VERBOSE != 0 ]] && exec "${prove_cmd[@]}" "$@"
+app = typer.Typer(add_completion=False)
 
-echo "Running prove with TAP output check ..."
 
-# use unbuffer if available and stdout is a terminal for immediate output
-[[ -t 1 ]] && unbuffer_cmd=("$(which unbuffer 2> /dev/null)") || unbuffer_cmd=()
+def filter_output(output: str) -> str:
+    lines = output.splitlines()
+    unhandled = []
+    for line in lines:
+        line = re.sub(r"^\[\d{2}:\d{2}:\d{2}\]\s*", "", line)
+        if re.search(r"x?t/.*\.t\s*\.+", line):
+            continue
+        if re.search(r"\s*\d+\.\.\d+.*", line):
+            continue
+        if line.startswith("# "):
+            continue
+        if "Files=" in line and "Tests=" in line:
+            continue
+        if "Result: " in line:
+            continue
+        if "All tests successful." in line:
+            continue
+        if line.strip():
+            unhandled.append(line)
+    return "\n".join(unhandled)
 
-OUTPUT=$(mktemp)
-"${unbuffer_cmd[@]}" "${prove_cmd[@]}" "$@" 2>&1 | tee "$OUTPUT"
 
-STATUS=${PIPESTATUS[0]}
+@app.command(
+    context_settings={
+        "allow_extra_args": True,
+        "ignore_unknown_options": True,
+        "help_option_names": ["--help-wrapper"],
+    }
+)
+def main(
+    ctx: typer.Context,
+    unbuffer: bool = typer.Option(
+        True,
+        "--unbuffer/--no-unbuffer",
+        help="Enable/disable unbuffer for immediate output.",
+    ),
+):
+    args = ctx.args
+    is_verbose = any(arg in ["-v", "--verbose"] for arg in args)
+    prove_cmd = ["prove", "-I", "."] + args
 
-if [ "$STATUS" -ne 0 ]; then
-    echo "not ok - prove failed"
-    exit "$STATUS"
-fi
+    if is_verbose:
+        os.execvp(prove_cmd[0], prove_cmd)
 
-UNHANDLED=$(sed --regexp-extended \
-    -e 's/^\[[0-9]{2}:[0-9]{2}:[0-9]{2}\][[:space:]]*//' \
-    -e '/x?t\/.*\.t\s*\.+/d' \
-    -e '/\s*[0-9]+\.\.[0-9]+.*/d' \
-    -e '/^# /d' \
-    -e '/Files=.*Tests=/d' \
-    -e '/Result: /d' \
-    -e '/All tests successful\./d' \
-    "$OUTPUT")
+    print("Running prove with TAP output check ...")
+    unbuffer_path = shutil.which("unbuffer")
+    if unbuffer and unbuffer_path and sys.stdout.isatty():
+        prove_cmd = [unbuffer_path] + prove_cmd
 
-if [ -n "$UNHANDLED" ]; then
-    echo "not ok - unhandled output found:"
-    echo "$UNHANDLED"
-    echo "Run with PROVE=tools/prove_wrapper to reproduce locally"
-    exit 1
-else
-    echo "ok - no unhandled output found"
-    exit 0
-fi
+    try:
+        process = subprocess.Popen(
+            prove_cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+            universal_newlines=True,
+        )
+        output_buffer = []
+        if process.stdout:
+            for line in process.stdout:
+                print(line, end="", flush=True)
+                output_buffer.append(line)
+
+        process.wait()
+        status = process.returncode
+    except Exception as e:
+        print(f"not ok - prove failed: {e}")
+        raise typer.Exit(code=1)
+
+    if status != 0:
+        raise typer.Exit(code=status)
+
+    unhandled = filter_output("".join(output_buffer))
+    if unhandled:
+        print("not ok - unhandled output found:")
+        print(unhandled)
+        print("Run with PROVE=tools/prove_wrapper to reproduce locally")
+        raise typer.Exit(code=1)
+    else:
+        print("ok - no unhandled output found")
+        raise typer.Exit(code=0)
+
+
+if __name__ == "__main__":
+    app()
