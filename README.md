@@ -3,7 +3,6 @@
 This repository is to be used as a
 [git-subrepo](https://github.com/ingydotnet/git-subrepo).
 
-
 `git-subrepo` is available in the following repositories:
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/git-subrepo.svg)](https://repology.org/project/git-subrepo/versions)
@@ -58,10 +57,10 @@ them and then do:
 ## git-subrepo
 
 You can find more information here:
-* [Repository and usage](https://github.com/ingydotnet/git-subrepo)
-* [A good comparison between subrepo, submodule and
-  subtree](https://github.com/ingydotnet/git-subrepo/blob/master/Intro.pod)
 
+- [Repository and usage](https://github.com/ingydotnet/git-subrepo)
+- [A good comparison between subrepo, submodule and
+  subtree](https://github.com/ingydotnet/git-subrepo/blob/master/Intro.pod)
 
 ## Development
 
