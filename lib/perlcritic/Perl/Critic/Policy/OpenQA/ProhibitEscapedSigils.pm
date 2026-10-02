@@ -18,10 +18,26 @@ sub applies_to { return qw(PPI::Token::Quote::Double) }
 
 sub violates ($self, $elem, $document) {
     my $content = $elem->string;
-    return () unless $content =~ m/(?<!\\)(?:\\\\)*\\ [\$\@]/x;
-    my $desc = 'Double-quoted string contains unnecessary backslash-escaped sigils';
-    my $expl = 'Use the q{} or qq{} operators instead of escaping characters to improve readability';
-    return $self->violation($desc, $expl, $elem);
+
+    # Check if there is any escaped sigil.
+    return () unless $content =~ m/(?<!\\)(?:\\\\)*\\([\$\@])/;
+
+    # Prohibit if always unnecessary (not followed by alphanumeric, underscore, sigils, or backslash)
+    if ($content =~ m/(?<!\\)(?:\\\\)*\\([\$\@])(?![a-zA-Z0-9_{\$\@\x5c])/) {
+        my $desc = 'Double-quoted string contains unnecessary backslash-escaped sigils';
+        my $expl = 'Use the q{} or qq{} operators instead of escaping characters to improve readability';
+        return $self->violation($desc, $expl, $elem);
+    }
+
+    # Prohibit if followed by valid identifier but string has no actual interpolation (unescaped sigil)
+    my $has_interpolation = $content =~ m/(?<!\\)(?:\\\\)*[\$\@][a-zA-Z0-9_{]/;
+    unless ($has_interpolation) {
+        my $desc = 'Double-quoted string contains unnecessary backslash-escaped sigils';
+        my $expl = 'Use the q{} or qq{} operators instead of escaping characters to improve readability';
+        return $self->violation($desc, $expl, $elem);
+    }
+
+    return ();
 }
 
 1;
