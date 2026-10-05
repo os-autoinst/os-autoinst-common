@@ -10,6 +10,8 @@ my $s5 = "hello world";
 my $s6 = "hello \\ world";
 my $s7 = "hello \" world";
 my $s8 = "something \\$var";
+my $s9 = "$args{username}\@$args{hostname}";
+my $s10 = "unsupported \$result '$nargs{result}'";
 
 ## name Failing
 ## failures 3
