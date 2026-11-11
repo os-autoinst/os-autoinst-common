@@ -24,7 +24,10 @@ sub violates ($self, $elem, $document) {
     # skip anything that's not a hash key
     return () unless is_hash_key($elem);
     # skip if it has a sibling, e.g. $h{'foo' . 'bar'}
-    return () if $elem->snext_sibling or $elem->sprevious_sibling;
+    my $prev = $elem->sprevious_sibling;
+    my $next = $elem->snext_sibling;
+    return () if ($prev && $prev->isa('PPI::Token::Operator') && $prev->content eq '.');
+    return () if ($next && $next->isa('PPI::Token::Operator') && $next->content eq '.');
 
     # only some PPI::Token::Quote::* classes implement literal
     my $k = $elem->can('literal') ? $elem->literal : $elem->string;
