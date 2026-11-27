@@ -16,4 +16,8 @@ jobs:
       - name: Install gitlint
         run: pip install gitlint-core
       - name: Check commit messages
-        run: gitlint --commits origin/${{ github.base_ref }}..HEAD
+        run: |-
+          gitlint --commits origin/${{ github.base_ref }}..HEAD \
+            -c general.ignore-fixup-commits=false \
+            -c general.ignore-squash-commits=false \
+            -c general.ignore-fixup-amend-commits=false

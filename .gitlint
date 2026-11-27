@@ -1,5 +1,9 @@
 [general]
-contrib=contrib-title-conventional-commits
+# Cleanup commits are rejected by the range invocations only (Makefile
+# test-gitlint, .github/workflows/base-commit-message-checker.yml): the commit-msg
+# hook lints with this file alone and must keep accepting `git commit --fixup`,
+# so ignore-*-commits=false never goes here.
+contrib=contrib-title-conventional-commits,contrib-disallow-cleanup-commits
 ignore=body-min-length,body-is-missing
 regex-style-search=True
 
